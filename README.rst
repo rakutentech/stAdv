@@ -56,12 +56,13 @@ A typical use of this package is as follows:
    as conveniently provided in ``stadv.optimization.lbfgs``.
    
 An end-to-end example use of the library is provided in the notebook
-``demo/simple_mnist.ipynb``.
+``demo/simple_mnist.ipynb`` (`see on GitHub <demo/simple_mnist.ipynb>`_).
 
 Documentation
 -------------
 
-The documentation of the API is available at http://stadv.readthedocs.io/en/latest/stadv.html.
+The documentation of the API is available at
+http://stadv.readthedocs.io/en/latest/stadv.html.
 
 Testing
 -------
