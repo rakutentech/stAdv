@@ -32,7 +32,7 @@ setup(
     long_description_content_type='text/x-rst',
     author='Beranger Dumont',
     author_email='beranger.dumont@rakuten.com',
-    #url='https://github.com/rakutentech/stAdv',
+    url='https://github.com/rakutentech/stAdv',
     license='MIT',
     packages=[package_name],
     python_requires='>=2.7',
@@ -52,5 +52,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3'
-    ]
+    ],
+    project_urls={
+        'Documentation': 'http://stadv.readthedocs.io/en/latest/stadv.html',
+        'Source': 'https://github.com/rakutentech/stAdv',
+        'Tracker': 'https://github.com/rakutentech/stAdv/issues'
+    }
 )
