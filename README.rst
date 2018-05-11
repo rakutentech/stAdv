@@ -33,10 +33,7 @@ Then, to install the ``stadv`` package, simply run
 
 .. code-block:: bash
 
-    $ python setup.py install
-
-(TODO: replace these instructions with ``pip install stadv`` once hosted on
-`PyPI <https://pypi.org/>`_.)
+    $ pip install stadv
 
 Usage
 -----
