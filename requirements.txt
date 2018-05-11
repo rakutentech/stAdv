@@ -1,0 +1,18 @@
+numpy
+scipy
+
+# TensorFlow can be installed either as CPU or GPU versions.
+# You select which one to install by (un)commenting these lines.
+tensorflow              # CPU Version of TensorFlow
+# tensorflow-gpu        # GPU version of TensorFlow
+
+# the following is needed for running the unit tests
+scikit-image
+
+# the following is needed for generating the documentation
+sphinx
+sphinxcontrib-napoleon
+
+# the following is needed for running the demo notebook
+matplotlib
+idx2numpy

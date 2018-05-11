@@ -1,0 +1,11 @@
+*.pyc
+
+build
+dist
+stadv.egg-info
+
+docs/_build
+
+.ipynb_checkpoints
+demo/t10k-images-idx3-ubyte
+demo/t10k-labels-idx1-ubyte
