@@ -1,0 +1,15 @@
+# minimal requirements.txt for the Read The Docs environment
+# to generate the documentation
+
+# note that there is a bug in some environments for TensorFlow >= 1.6
+# see https://github.com/tensorflow/tensorflow/issues/17411
+# this was making the RTD environment crash
+# (same as https://github.com/rtfd/readthedocs.org/issues/3738)
+# so we stick to TensorFlow 1.5 here
+
+numpy
+scipy
+tensorflow==1.5
+
+sphinx
+sphinxcontrib-napoleon
