@@ -21,8 +21,8 @@ def lbfgs(
                            dimension indicates the dimension on which the pixel
                            shift is applied.
         flows_x0 (np.ndarray): Initial guess for the flows. If the input is not
-                               a `np.ndarray`, it will be converted as such if
-                               possible.
+                               of type `np.ndarray`, it will be converted as
+                               such if possible.
         feed_dict (dict): feed dictionary to the ``tf.run`` operation (for
                           everything  which might be needed to execute the graph
                           beyond the input flows).
@@ -34,7 +34,7 @@ def lbfgs(
                            If not provided a new session will be started.
 
     Returns:
-        `Dictionary` with keys ``'flows'`` (`ndarray`, estimated flows of the
+        `Dictionary` with keys ``'flows'`` (`np.ndarray`, estimated flows of the
         minimum), ``'loss'`` (`float`, value of loss at the minimum), and
         ``'info'`` (`dict`, information summary as returned by
         ``scipy.optimize.fmin_l_bfgs_b``).

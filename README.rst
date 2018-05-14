@@ -49,7 +49,7 @@ A typical use of this package is as follows:
    local smoothness), e.g. using ``stadv.losses.adv_loss`` and
    ``stadv.losses.flow_loss``, respectively. Define the final loss to be
    optimized as a combination of the two.
-4. Find the flows which minimize this loss, e.g. by using the L-BFGS-B optimizer
+4. Find the flows which minimize this loss, e.g. by using an L-BFGS-B optimizer
    as conveniently provided in ``stadv.optimization.lbfgs``.
    
 An end-to-end example use of the library is provided in the notebook
