@@ -22,7 +22,7 @@ implementation was originally made:
 
     | Robustness of Rotation-Equivariant Networks to Adversarial Perturbations
     | Beranger Dumont, Simona Maggio, Pablo Montalvo
-    | `arXiv:1802.06627 <https://arxiv.org/abs/1802.06627>`_
+    | To appear in the `ICML 2018 Workshop on "Towards learning with limited labels: Equivariance, Invariance, and Beyond" <https://sites.google.com/site/icml18limitedlabels>`_, `arXiv:1802.06627 <https://arxiv.org/abs/1802.06627>`_
 
 Installation
 ------------
