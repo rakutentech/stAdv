@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def flow_loss(flows, padding_mode='SYMMETRIC'):
+def flow_loss(flows, padding_mode='SYMMETRIC', epsilon=1e-8):
     """Computes the flow loss designed to "enforce the locally smooth
     spatial transformation perturbation". See Eq. (4) in Xiao et al.
     (arXiv:1801.02612).
@@ -20,20 +20,12 @@ def flow_loss(flows, padding_mode='SYMMETRIC'):
                             * ``'CONSTANT'``: 0-padding of the boundaries so as
                               to enforce a small flow at the boundary of the
                               images.
+        epsilon (float): small value added to the argument of ``tf.sqrt``
+                         to prevent NaN gradients when the argument is zero.
 
     Returns:
          1-D `tf.Tensor` of length `B` of the same type as `flows`.
     """
-    def _l2_diff_norm_squared(t1, t2, axis):
-        """Shortcut for getting the squared L2 norm of the difference
-        between two tensors when slicing on the second axis.
-        """
-        return tf.norm(
-            t1[:, axis] - t2[:, axis],
-            ord='euclidean',
-            axis=(1,2)
-        ) ** 2
-
     with tf.variable_scope('flow_loss'):
         # following the notation from Eq. (4):
         # \Delta u^{(p)} is flows[:, 1],
@@ -55,16 +47,19 @@ def flow_loss(flows, padding_mode='SYMMETRIC'):
             padded_flows[:, :, :-2, :-2]  # top left
         ]
 
-        return tf.add_n(
-            [
-                tf.sqrt(
-                    # ||\Delta u^{(p)} - \Delta u^{(q)}||_2^2
-                    _l2_diff_norm_squared(flows, shifted_flow, 1) +
-                    # ||\Delta v^{(p)} - \Delta v^{(q)}||_2^2
-                    _l2_diff_norm_squared(flows, shifted_flow, 0)
-                )
-                for shifted_flow in shifted_flows
-            ], name='L_flow'
+        return tf.reduce_sum(
+            tf.add_n(
+                [
+                    tf.sqrt(
+                        # ||\Delta u^{(p)} - \Delta u^{(q)}||_2^2
+                        (flows[:, 1] - shifted_flow[:, 1]) ** 2 +
+                        # ||\Delta v^{(p)} - \Delta v^{(q)}||_2^2
+                        (flows[:, 0] - shifted_flow[:, 0]) ** 2 +
+                        epsilon  # for numerical stability
+                    )
+                    for shifted_flow in shifted_flows
+                ]
+            ), axis=[1, 2], name='L_flow'
         )
 
 def adv_loss(unscaled_logits, targets, kappa=None):

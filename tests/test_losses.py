@@ -8,6 +8,7 @@ class FlowLossCase(tf.test.TestCase):
     """Test the flow_loss loss function."""
 
     def setUp(self):
+        np.random.seed(0)
         # dimensions of the flow "random" shape for generic cases
         self.N, self.H, self.W = 2, 7, 6
         flow_shape = (self.N, 2, self.H, self.W)
@@ -15,8 +16,15 @@ class FlowLossCase(tf.test.TestCase):
 
         self.flows = tf.placeholder(tf.float32, shape=None, name='flows')
 
-        self.loss_symmetric = stadv.losses.flow_loss(self.flows, 'SYMMETRIC')
-        self.loss_constant = stadv.losses.flow_loss(self.flows, 'CONSTANT')
+        self.loss_symmetric = stadv.losses.flow_loss(
+            self.flows, 'SYMMETRIC', epsilon=0.
+        )
+        self.loss_constant = stadv.losses.flow_loss(
+            self.flows, 'CONSTANT', epsilon=0.
+        )
+        self.loss_symmetric_eps = stadv.losses.flow_loss(
+            self.flows, 'SYMMETRIC', epsilon=1e-8
+        )
 
     def test_zero_flow(self):
         """Make sure that null flows (all 0) gives a flow loss of 0."""
@@ -51,6 +59,52 @@ class FlowLossCase(tf.test.TestCase):
                 self.assertAllClose,
                 np.amax(loss_symmetric), 0.,
                 msg='constant flow with symmetric padding gives > 0 loss'
+            )
+
+    def test_manual_calculation_symmetric(self):
+        custom_flow = np.random.random(self.flow_zero.shape)
+
+        # manual calculation (looping over pixels)
+        result = []
+        for img_flow in custom_flow:
+            loss = 0.
+            max_i = img_flow.shape[1] - 1
+            max_j = img_flow.shape[2] - 1
+            for i in range(max_i + 1):
+                i_corner1 = i - 1 if i > 0 else 0
+                i_corner2 = i + 1 if i < max_i else max_i
+                for j in range(max_j + 1):
+                    j_corner1 = j - 1 if j > 0 else 0
+                    j_corner2 = j + 1 if j < max_j else max_j
+
+                    for (i_coord, j_coord) in [
+                        (i_corner1, j_corner1),
+                        (i_corner1, j_corner2),
+                        (i_corner2, j_corner1),
+                        (i_corner2, j_corner2)
+                    ]:
+                        loss += np.sqrt(
+                            (
+                                img_flow[0, i, j] -
+                                img_flow[0, i_coord, j_coord]
+                            ) ** 2 +
+                            (
+                                img_flow[1, i, j] -
+                                img_flow[1, i_coord, j_coord]
+                            ) ** 2
+                            + 1e-8
+                        )
+            result.append(loss)
+        result = np.array(result)
+
+        with self.test_session():
+            loss_symmetric = self.loss_symmetric_eps.eval(feed_dict={
+                self.flows: custom_flow
+            })
+            call_assert(
+                self.assertAllClose,
+                result, loss_symmetric,
+                msg='L_flow does not match manual calculation in symmetric case'
             )
 
 class AdvLossCase(tf.test.TestCase):
