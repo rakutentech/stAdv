@@ -39,7 +39,7 @@ def flow_st(images, flows, data_format='NHWC'):
                 tf.identity(flows_shape[2:], name='flows_shape_HW')
             )]
         ):
-            # case the input to float32 for consistency with the rest
+            # cast the input to float32 for consistency with the rest
             images = tf.cast(images, 'float32', name='images_float32')
             flows = tf.cast(flows, 'float32', name='flows_float32')
 
