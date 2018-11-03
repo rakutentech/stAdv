@@ -4,8 +4,8 @@ from scipy.optimize import fmin_l_bfgs_b
 
 
 def lbfgs(
-    loss, flows, flows_x0, feed_dict=None, fmin_l_bfgs_b_extra_kwargs=None,
-    sess=None
+    loss, flows, flows_x0, feed_dict=None, grad_op=None,
+    fmin_l_bfgs_b_extra_kwargs=None, sess=None
 ):
     """Optimize a given loss with (SciPy's external) L-BFGS-B optimizer.
     It can be used to solve the optimization problem of Eq. (2) in Xiao et al.
@@ -26,6 +26,9 @@ def lbfgs(
         feed_dict (dict): feed dictionary to the ``tf.run`` operation (for
                           everything  which might be needed to execute the graph
                           beyond the input flows).
+        grad_op (tf.Tensor): gradient of the loss with respect to the flows.
+                             If not provided it will be computed from the input
+                             and added to the graph.
         fmin_l_bfgs_b_extra_kwargs (dict): extra arguments to
                                            ``scipy.optimize.fmin_l_bfgs_b``
                                            (e.g. for modifying the stopping
@@ -96,12 +99,15 @@ def lbfgs(
     fmin_l_bfgs_b_kwargs.update(default_extra_kwargs)
     fmin_l_bfgs_b_kwargs.update(fmin_l_bfgs_b_extra_kwargs)
 
-    loss_gradient = tf.gradients(loss, flows, name='loss_gradient')[0]
-    if loss_gradient is None:
-        raise ValueError(
-            "Cannot compute the gradient d(loss)/d(flows). Is the graph really "
-            "differentiable?"
-        )
+    if grad_op is not None:
+        loss_gradient = grad_op
+    else:
+        loss_gradient = tf.gradients(loss, flows, name='loss_gradient')[0]
+        if loss_gradient is None:
+            raise ValueError(
+                "Cannot compute the gradient d(loss)/d(flows). Is the graph "
+                "really differentiable?"
+            )
 
     sess_ = tf.Session() if sess is None else sess
     raw_results = fmin_l_bfgs_b(**fmin_l_bfgs_b_kwargs)
